@@ -55,7 +55,8 @@ def encode(image_name, secret_data):
             #     data_index += 1
             if data_index < data_len:
                 # least significant blue pixel bit
-                pixel[2] = int(Cb[:-1] + binary_secret_data[data_index], 2)
+                pixel[2] = int(Cb[:-8] + binary_secret_data[data_index] + "0000000", 2)
+                print(Cb[:-8] + binary_secret_data[data_index] + "0000000")
                 # sum = bin(add(int(Cb[:-1],2),int(binary_secret_data[data_index],2)))
                 # print(sum[2:])
                 # pixel[2] = sum[2:]
@@ -85,7 +86,7 @@ def decode(image_name):
             Y, Cr, Cb = to_bin(pixel)
             #binary_data += Y[-1]
             #binary_data += Cr[-1]
-            binary_data += Cb[-1]
+            binary_data += Cb[-8]
     # split by 8-bits
     #print("error")
     all_bytes = [binary_data[i: i+8] for i in range(0, len(binary_data), 8)]
