@@ -70,7 +70,7 @@ def decode(image_name):
     print("[+] Decoding...")
     # read the image
     image = cv2.imread(image_name,-1)
-    cv2.imshow("im",image)
+    #cv2.imshow("im",image)
     #image_rgb = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     #cv2.imshow("im",image_rgb)
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
@@ -101,12 +101,13 @@ if __name__ == "__main__":
     input_image = "VISION\supernova.jpg"
     output_image = "encoded_image.PNG"
     secret_data = "This is a top secret message."
+    im = cv2.imread("encoded_image.PNG",-1)
+    cv2.imshow("a",im)
     # encode the data into the image
     encoded_image = encode(image_name=input_image, secret_data=secret_data)
     # save the output image (encoded image)
     cv2.imwrite(output_image, encoded_image)
-    im = cv2.imread("encoded_image.PNG",-1)
-    cv2.imshow("a",im)
+    
     # # decode the secret data from the image
     decoded_data = decode(output_image)
     print("[+] Decoded data:", decoded_data)
