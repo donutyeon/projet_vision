@@ -1,5 +1,5 @@
 import cv2
-from project_tests import encode, decode
+from project_tests import encode, decode, show_image
 
 
 input_image = "VISION\supernova.jpg"
@@ -11,7 +11,9 @@ im = cv2.imread("encoded_image.PNG",-1)
 encoded_image = encode(image_name=input_image, secret_data=secret_data)
 # save the output image (encoded image)
 cv2.imwrite(output_image, encoded_image)
-    
+
+#show_image(output_image)
+
 # decode the secret data from the image
 decoded_data = decode(output_image)
 print("[+] Decoded data:", decoded_data)

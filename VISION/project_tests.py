@@ -4,13 +4,13 @@ import numpy as np
 def to_bin(data):
     """Convert `data` to binary format as string"""
     if isinstance(data, str):
-        return ''.join([ format(ord(i), "08b") for i in data ])
+        return ''.join([ format(ord(i), "016b") for i in data ])
     elif isinstance(data, bytes):
-        return ''.join([ format(i, "08b") for i in data ])
+        return ''.join([ format(i, "016b") for i in data ])
     elif isinstance(data, np.ndarray):
-        return [ format(i, "08b") for i in data ]
-    elif isinstance(data, int) or isinstance(data, np.uint8):
-        return format(data, "08b")
+        return [ format(i, "016b") for i in data ]
+    elif isinstance(data, int) or isinstance(data, np.uint16):
+        return format(data, "016b")
     else:
         raise TypeError("Type not supported.")
 
@@ -38,6 +38,7 @@ def encode(image_name, secret_data):
     # convert data to binary
     binary_secret_data = to_bin(secret_data)
     # size of data to hide
+    print(binary_secret_data)
     data_len = len(binary_secret_data)
     for row in image_rgb:
         for pixel in row:
@@ -55,6 +56,9 @@ def encode(image_name, secret_data):
             if data_index < data_len:
                 # least significant blue pixel bit
                 pixel[2] = int(Cb[:-1] + binary_secret_data[data_index], 2)
+                # sum = bin(add(int(Cb[:-1],2),int(binary_secret_data[data_index],2)))
+                # print(sum[2:])
+                # pixel[2] = sum[2:]
                 data_index += 1
             # if data is encoded, just break out of the loop
             if data_index >= data_len:
@@ -65,12 +69,12 @@ def encode(image_name, secret_data):
     return image_rgb
 
 
-
 def decode(image_name):
     print("[+] Decoding...")
     # read the image
+    print(image_name)
     image = cv2.imread(image_name,-1)
-    #cv2.imshow("im",image)
+    cv2.imshow("im",image)
     #image_rgb = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     #cv2.imshow("im",image_rgb)
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
@@ -95,7 +99,19 @@ def decode(image_name):
             break
     return decoded_data[:-5]
 
-
+def show_image(img_name):
+    image = cv2.imread(img_name,-1)
+    cv2.imshow("im",image)
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
+    cv2.imshow("imag",image_rgb)
+    binary_data = ""
+    for row in image_rgb:
+        for pixel in row:
+            Y, Cr, Cb = to_bin(pixel)
+            #binary_data += Y[-1]
+            #binary_data += Cr[-1]
+            binary_data += Cb[-1]
+    print(binary_data)
 
 # if __name__ == "__main__":
 #     input_image = "VISION\supernova.jpg"
