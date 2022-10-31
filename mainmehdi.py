@@ -32,10 +32,12 @@ for i in range(0,imgB.shape[0]):
 
 
 imgA=cv.cvtColor(imgA,cv.COLOR_YCrCb2BGR)
+imgA=cv.cvtColor(imgA,cv.COLOR_BGR2RGB)
 cv.imwrite('secret.png',imgA)
 #repecteur===============
 imgA = cv.imread('secret.png',-1)
 imgB=np.zeros(imgA.shape,np.uint16)
+imgA=cv.cvtColor(imgA,cv.COLOR_RGB2BGR)
 imgA=cv.cvtColor(imgA,cv.COLOR_BGR2YCrCb)
 imgA=np.array(imgA,dtype=np.uint16)
 for i in range(0,imgB.shape[0]):
