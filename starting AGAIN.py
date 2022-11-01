@@ -37,7 +37,8 @@ def _merge_bgr(YCrCb, gray):
     """
     Y, Cr, Cb = _int_to_bin16(YCrCb)
     g = _int_to_bin8(gray)
-    bgr = Y,Cr[:8] + g,Cb[:8] + g
+    #bgr = Y,Cr[:-8] + g,Cb[:-8] + g
+    bgr = Y,Cr,Cb[:-8] + g
     return _bin_to_int(bgr)
 
 def _unmerge_rgb(YCrCb):
@@ -48,7 +49,8 @@ def _unmerge_rgb(YCrCb):
     Y,Cr,Cb = _int_to_bin16(YCrCb)
     # Extract the last 8 bits (corresponding to the hidden image)
     # Concatenate 8 zero bits because we are working with 8 bit
-    new_bgr = Y,Cr[8:],Cb[8:]
+    # new_bgr = Y,Cr[-8:],Cb[-8:]
+    new_bgr = Y,Cr,Cb[-8:]
     return _bin_to_int(new_bgr)
 
 def merge(imageA, message):
@@ -123,8 +125,8 @@ def unmerge(image):
     after=img.copy()
     diff=np.mean(before[1]-after[1])
     print (diff)
-    diffcb=np.mean(before[2]-after[2])
-    print(diffcb)
+    # diffcb=np.mean(before[2]-after[2])
+    # print(diffcb)
     for y in range(h):
         for x in range(w):
             u=_unmerge_rgb(img[y,x])
@@ -135,7 +137,7 @@ def unmerge(image):
             # bin2=bin2[:8]+'00000000'
             # new=(bi[0],bin1,bin2)
             # ent=_bin_to_int(new)
-            new_image[y, x] = (u[1]+u[2])//2
+            new_image[y, x] = u[2]
     return new_image
 
 message="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
