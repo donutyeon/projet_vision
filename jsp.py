@@ -37,7 +37,7 @@ def _merge_bgr(YCrCb, gray):
     """
     Y, Cr, Cb = _int_to_bin16(YCrCb)
     g = _int_to_bin8(gray)
-    Cb=Cb[:6]+g[-1]+Cb[7:-4]+'0111'
+    Cb=Cb[:8]+g[-1]+Cb[9:-4]+'0111'
     bgr = Y,Cr,Cb
     return _bin_to_int(bgr)
 
@@ -49,7 +49,7 @@ def _unmerge_rgb(YCrCb):
     Y,Cr,Cb = _int_to_bin16(YCrCb)
     # Extract the last 8 bits (corresponding to the hidden image)
     # Concatenate 8 zero bits because we are working with 8 bit
-    new_bgr = Y,Cr,Cb[6]
+    new_bgr = Y,Cr,Cb[8]
     return _bin_to_int(new_bgr)
 
 def merge(imageA, message):
@@ -122,19 +122,12 @@ def unmerge(image):
     print(img[0,0])
     for y in range(h):
         for x in range(w):
-            # bi=_int_to_bin16(img[y,x])
-            # bin1=bi[1]
-            # bin1=bin1[:8]+'00000000'            
-            # bin2=bi[2]
-            # bin2=bin2[:8]+'00000000'
-            # new=(bi[0],bin1,bin2)
-            # ent=_bin_to_int(new)
             new_image[y, x] = _unmerge_rgb(img[y,x])[2]
     new_image[(new_image==1)]=255
     return new_image
 
 message="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-imgA='dog.jpg'
+imgA='pollo.jpg'
 output_image='resultat.png'
 merged=merge(imageA=imgA,message=message)
 cv2.imwrite(output_image, merged)
