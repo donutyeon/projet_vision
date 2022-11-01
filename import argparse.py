@@ -94,24 +94,28 @@ def main():
     subparser = parser.add_subparsers(dest='command')
 
     merge = subparser.add_parser('merge')
-    merge.add_argument('--image1', required=True, help='Image1 path')
-    merge.add_argument('--image2', required=True, help='Image2 path')
-    merge.add_argument('--output', required=True, help='Output path')
+    merge.add_argument('--image1', required=True, help='stardew.png')
+    merge.add_argument('--image2', required=True, help='pollo.jpg')
+    merge.add_argument('--output', required=True, help='result.png')
 
     unmerge = subparser.add_parser('unmerge')
-    unmerge.add_argument('--image', required=True, help='Image path')
-    unmerge.add_argument('--output', required=True, help='Output path')
+    unmerge.add_argument('--image', required=True, help='result.png')
+    unmerge.add_argument('--output', required=True, help='caca.png')
 
     args = parser.parse_args()
 
     if args.command == 'merge':
+        print("merge")
         image1 = Image.open(args.image1)
         image2 = Image.open(args.image2)
         Steganography().merge(image1, image2).save(args.output)
     elif args.command == 'unmerge':
+        print("unmerge")
         image = Image.open(args.image)
         Steganography().unmerge(image).save(args.output)
 
+def main2():
+    imgA=Image.open('stardew.png')
 
 if __name__ == '__main__':
     main()
