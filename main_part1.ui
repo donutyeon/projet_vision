@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="picturelabel">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -24,10 +24,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>CHOSEN PIC</string>
+     <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="encode_button">
     <property name="geometry">
      <rect>
       <x>340</x>
@@ -50,7 +50,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="upload_button">
     <property name="geometry">
      <rect>
       <x>520</x>
@@ -63,7 +63,7 @@
      <string>upload</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="decode_button">
     <property name="geometry">
      <rect>
       <x>430</x>

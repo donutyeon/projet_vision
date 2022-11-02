@@ -1,7 +1,40 @@
 from PIL import Image
 import cv2
 import numpy as np
+from PyQt5 import QtWidgets, uic, QtGui, QtCore
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtGui import QPixmap,QImage
+import sys
+import ctypes
 BLACK_PIXEL = (0, 0, 0)
+
+class Ui(QtWidgets.QMainWindow):
+        def __init__(self):
+                super(Ui, self).__init__()
+                self.setWindowIcon(QtGui.QIcon('logo_vision.png'))
+                self.setIconSize(QtCore.QSize(200,180))
+                self.setWindowTitle("Projet Vision")
+                uic.loadUi('main_part1.ui', self)
+                
+                self.upload_button=self.findChild(QtWidgets.QPushButton,'upload_button')
+                #self.upload_button.clicked.connect(self.UploadListener)
+                self.encode_button=self.findChild(QtWidgets.QPushButton,'encode_button')
+                #self.encode_button.clicked.connect(self.EncodeListener)
+                self.decode_button=self.findChild(QtWidgets.QPushButton,'decode_button')
+                #self.decode_button.clicked.connect(self.DecodeListener)
+
+                self.pic_label=self.findChild(QtWidgets.QLabel,'picturelabel')
+                self.image=QPixmap('vision.png')
+                self.pic_label.setPixmap(self.image)
+                self.show()
+
+        def loadImg(self):
+            file=QFileDialog.getOpenFileName(self,"open file "," ","png(*.png);;jpeg(*.jpeg);;jpg(*.jpg)")
+            self.image=QPixmap(file[0])
+            self.pic.setPixmap(self.image)
+            self.imageisloaded=True
+            self.image=self.convertQImageToMat(self.image)
+            self.imgsrc=self.image
 
 def _int_to_bin8(gray):
     """Convert an integer tuple to a binary (string) tuple.
@@ -126,13 +159,16 @@ def unmerge(image):
     new_image[(new_image==1)]=255
     return new_image
 
-message="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-imgA='pollo.jpg'
-output_image='resultat.png'
-merged=merge(imageA=imgA,message=message)
-cv2.imwrite(output_image, merged)
+# message="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+# imgA='pollo.jpg'
+# output_image='resultat.png'
+# merged=merge(imageA=imgA,message=message)
+# cv2.imwrite(output_image, merged)
 
-unmerged=unmerge('resultat.png')
-cv2.imshow('aaaaaaaaaa',unmerged)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# unmerged=unmerge('resultat.png')
+# cv2.imshow('aaaaaaaaaa',unmerged)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+app = QtWidgets.QApplication(sys.argv)
+window = Ui()
+app.exec_()
