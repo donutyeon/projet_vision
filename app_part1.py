@@ -1,4 +1,3 @@
-from PIL import Image
 import cv2
 import numpy as np
 from PyQt5 import QtWidgets, uic, QtGui, QtCore
@@ -61,18 +60,15 @@ class Ui(QtWidgets.QMainWindow):
             Y,Cr,Cb= YCrCb
             return f'{Y:016b}', f'{Cr:016b}', f'{Cb:016b}'
 
-        def _bin_to_int(self,bgr):
+        def _bin_to_int(self,YCrCb):
             """Convert a binary (string) tuple to an integer tuple.
             :param rgb: A string tuple like ("00101010", "11101011", "00010110")
             :return: Return an int tuple like (220, 110, 96)
-            """
-            if(len(bgr) !=3):
-                print(len(bgr))
-            
-            b, g, r= bgr
-            return int(b, 2), int(g, 2),int(r,2)
+            """            
+            Y,Cr,Cb= YCrCb
+            return int(Y, 2), int(Cr, 2),int(Cb,2)
 
-        def _merge_bgr(self,YCrCb, gray):
+        def _merge_YCrCb(self,YCrCb, gray):
             """Merge two RGB tuples.
             :param rgb1: An integer tuple like (220, 110, 96)
             :param rgb2: An integer tuple like (280, 95, 105)
@@ -81,10 +77,10 @@ class Ui(QtWidgets.QMainWindow):
             Y, Cr, Cb = self._int_to_bin16(YCrCb)
             g = self._int_to_bin8(gray)
             Cb=Cb[:8]+g[-1]+Cb[9:-4]+'0111'
-            bgr = Y,Cr,Cb
-            return self._bin_to_int(bgr)
+            new_YCrCbr = Y,Cr,Cb
+            return self._bin_to_int(new_YCrCbr)
 
-        def _unmerge_rgb(self,YCrCb):
+        def _unmerge_YCrCb(self,YCrCb):
             """Unmerge RGB.
             :param rgb: An integer tuple like (220, 110, 96)
             :return: An integer tuple with the two RGB values merged.
@@ -92,8 +88,8 @@ class Ui(QtWidgets.QMainWindow):
             Y,Cr,Cb = self._int_to_bin16(YCrCb)
             # Extract the last 8 bits (corresponding to the hidden image)
             # Concatenate 8 zero bits because we are working with 8 bit
-            new_bgr = Y,Cr,Cb[8]
-            return self._bin_to_int(new_bgr)
+            new_YCrCb = Y,Cr,Cb[8]
+            return self._bin_to_int(new_YCrCb)
 
         def EncodeListener(self):
             self.encoded=self.Encode(self.image[0],self.message.toPlainText())
@@ -143,8 +139,6 @@ class Ui(QtWidgets.QMainWindow):
                 cv2.putText(imgB, message[i:i+nb_characters], org, font,fontScale, color, thickness, cv2.LINE_8)
                 org=(org[0],org[1]+height)
                 i+=nb_characters
-            #cv2.imshow("caca",imgB)
-            print(np.unique(imgB))
             imgB[(imgB==255)]=1
             print(np.unique(imgB))
 
@@ -156,7 +150,7 @@ class Ui(QtWidgets.QMainWindow):
                     # is_valid = lambda: i < image2.size[0] and j < image2.size[1]
                     YCrCb = imgA[y,x]
                     #bgr2 = imgB[y, x] #if is_valid() else self.BLACK_PIXEL
-                    new_image[y, x] = self._merge_bgr(YCrCb, imgB[y,x])
+                    new_image[y, x] = self._merge_YCrCb(YCrCb, imgB[y,x])
                         
             new_image=cv2.cvtColor(new_image,cv2.COLOR_YCrCb2BGR)
             
@@ -175,7 +169,7 @@ class Ui(QtWidgets.QMainWindow):
             print(img[0,0])
             for y in range(h):
                 for x in range(w):
-                    new_image[y, x] = self._unmerge_rgb(img[y,x])[2]
+                    new_image[y, x] = self._unmerge_YCrCb(img[y,x])[2]
             new_image[(new_image==1)]=255
             image = QtGui.QImage(new_image, new_image.shape[1],new_image.shape[0],QImage.Format_Grayscale8)
             self.pic=QPixmap(image)
