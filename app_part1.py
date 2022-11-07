@@ -4,7 +4,6 @@ from PyQt5 import QtWidgets, uic, QtGui, QtCore
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QPixmap,QImage
 import sys
-from PIL import ImageQt
 import ctypes
 BLACK_PIXEL = (0, 0, 0)
 
