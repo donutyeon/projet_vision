@@ -133,7 +133,7 @@ class Ui(QtWidgets.QMainWindow):
             org = (0, 20)
             fontScale = 1
             color = (0, 0, 0)
-            thickness = 2
+            thickness = 1
             imgB=cv2.cvtColor(imgB,cv2.COLOR_BGR2GRAY)
             h,w=imgB.shape
             height=25
