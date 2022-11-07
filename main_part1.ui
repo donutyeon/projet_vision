@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(220, 236, 255);</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="picturelabel">
     <property name="geometry">
@@ -39,11 +42,27 @@
    <widget class="QPushButton" name="encode_button">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>400</y>
+      <x>420</x>
+      <y>430</y>
       <width>80</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	background-color:rgb(255, 248, 215);
+	border-radius:10px;
+	border-style:outset;
+	border-color: rgb(19, 26, 63);
+	border-width:1px;
+	color: rgb(19, 26, 63);
+}
+QPushButton:hover {
+            background-color: rgb(246, 252, 126);
+        }
+QPushButton:focus {
+            background-color: rgb(90, 71, 173);
+        }</string>
     </property>
     <property name="text">
      <string>encode</string>
@@ -54,25 +73,18 @@
      <rect>
       <x>10</x>
       <y>400</y>
-      <width>321</width>
+      <width>371</width>
       <height>41</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(19, 26, 63);
+border-width:1px;
+border-color: rgb(19, 26, 63);</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="upload_button">
-    <property name="geometry">
-     <rect>
-      <x>500</x>
-      <y>400</y>
-      <width>80</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>upload</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="decode_button">
     <property name="geometry">
      <rect>
       <x>420</x>
@@ -81,6 +93,51 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	background-color:rgb(255, 248, 215);
+	border-radius:10px;
+	border-style:outset;
+	border-color: rgb(19, 26, 63);
+	border-width:1px;
+	color: rgb(19, 26, 63);
+}
+QPushButton:hover {
+            background-color: rgb(246, 252, 126);
+        }
+QPushButton:focus {
+            background-color: rgb(90, 71, 173);
+        }</string>
+    </property>
+    <property name="text">
+     <string>upload</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="decode_button">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>430</y>
+      <width>80</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	background-color:rgb(255, 248, 215);
+	border-radius:10px;
+	border-style:outset;
+	border-color: rgb(19, 26, 63);
+	border-width:1px;
+	color: rgb(19, 26, 63);
+}
+QPushButton:hover {
+            background-color: rgb(246, 252, 126);
+        }
+QPushButton:focus {
+            background-color: rgb(90, 71, 173);
+        }</string>
+    </property>
     <property name="text">
      <string>decode</string>
     </property>
@@ -88,11 +145,27 @@
    <widget class="QPushButton" name="save_button">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>550</x>
       <y>400</y>
       <width>80</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	background-color:rgb(255, 248, 215);
+	border-radius:10px;
+	border-style:outset;
+	border-color: rgb(19, 26, 63);
+	border-width:1px;
+	color: rgb(19, 26, 63);
+}
+QPushButton:hover {
+            background-color: rgb(246, 252, 126);
+        }
+QPushButton:focus {
+            background-color: rgb(90, 71, 173);
+        }</string>
     </property>
     <property name="text">
      <string>save</string>
