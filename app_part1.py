@@ -44,7 +44,7 @@ class Ui(QtWidgets.QMainWindow):
 
         def SaveImg(self):
             try:       
-                self.image=QFileDialog.getSaveFileName(self,"save file","","png(*.png);;jpeg(*.jpeg);;jpg(*.jpg)")
+                self.image=QFileDialog.getSaveFileName(self,"save file","","png(*.png)")
                 if self.decoded is None:
                     if self.loaded is None:
                         ctypes.windll.user32.MessageBoxW(0, "No picture loaded.", "", 0)
@@ -106,7 +106,7 @@ class Ui(QtWidgets.QMainWindow):
             try:
 
                 self.encoded=self.Encode(self.image[0],self.message.toPlainText())
-                self.image=QFileDialog.getSaveFileName(self,"save file ","","png(*.png);;jpeg(*.jpeg);;jpg(*.jpg)")
+                self.image=QFileDialog.getSaveFileName(self,"save file ","","png(*.png)")
                 cv2.imwrite(self.image[0], self.encoded)
                 self.pic=QPixmap(self.image[0])
                 self.pic_label.setScaledContents(True);
