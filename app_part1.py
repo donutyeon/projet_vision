@@ -109,7 +109,7 @@ class Ui(QtWidgets.QMainWindow):
                 self.image=QFileDialog.getSaveFileName(self,"save file ","","png(*.png)")
                 cv2.imwrite(self.image[0], self.encoded)
                 self.pic=QPixmap(self.image[0])
-                self.pic_label.setScaledContents(True);
+                self.pic_label.setScaledContents(True)
                 self.pic_label.setPixmap(self.pic)
             except:
                 ctypes.windll.user32.MessageBoxW(0, "No picture loaded.", "", 0)
