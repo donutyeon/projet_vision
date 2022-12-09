@@ -67,7 +67,7 @@ def game( ):
             circle_x = points[0][0]
             circle_y = points[0][1]
             circle_rayon=points[0][2]
-            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(100,120,20),5)
+            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(255,20,20),5)
             cv2.rectangle( mask, (circle_x-circle_rayon ,circle_y-circle_rayon) ,(circle_x+circle_rayon ,circle_y+circle_rayon ) ,( 255 ,255 ,0 ) ,2 )
             if(circle_rayon > 50):
                 print(x_center_bar)

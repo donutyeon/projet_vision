@@ -1,7 +1,10 @@
 import cv2
 import numpy as np
-lo=np.array([90,100,70])
-hi=np.array([120,170,140])
+# lo=np.array([90,100,70])
+# hi=np.array([120,170,140])
+
+lo = np.array([0,50,120]) #lower hsv range of blue colour
+hi = np.array([70,120,200])
 def detect_inrange(image,surfacemin,surfacemax):
     points=[]
     image=cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
