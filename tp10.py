@@ -26,7 +26,6 @@ while(True):
     cv2.flip(frame,1,frame)
     image,mask,points=detect_inrange(frame,200,5000)
     if len(points) != 0:
-        
         circle_x = points[0][0]
         circle_y = points[0][1]
         circle_rayon=points[0][2]

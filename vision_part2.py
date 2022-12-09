@@ -5,6 +5,22 @@ from random import random, randint   # add any other functions you need here
 global keep_going
 keep_going = True
 
+def detect_inrange(image,surfacemin,surfacemax, lo, hi):
+    points=[]
+    image=cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
+    mask=cv2.inRange(image,lo,hi)
+    mask=cv2.erode(mask,None,iterations=2)
+    mask=cv2.dilate(mask,None,iterations=2)
+    elements = cv2.findContours(mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
+    elements = sorted(elements,key = lambda x:cv2.contourArea(x), reverse=True)
+    for element in elements:
+        if cv2.contourArea(element) > surfacemin and cv2.contourArea(element) < surfacemax:
+            ((x,y),rayon)=cv2.minEnclosingCircle(element)
+            points.append(np.array([int(x),int(y),int(rayon)]))
+        else:
+            break
+    return image,mask,points
+
 def game( ):
     dx = 4 #values with which the ball's pixel x coord increases
     dy = 4 #values with which the ball's pixel y coord increases
@@ -43,41 +59,58 @@ def game( ):
         height = frame.shape[0]
         width = frame.shape[1]
         frame = cv2.flip(frame, 1,frame)
-        hsv = cv2.cvtColor( frame ,cv2.COLOR_BGR2HSV ) #frame in hsv format
+        # hsv = cv2.cvtColor( frame ,cv2.COLOR_BGR2HSV ) #frame in hsv format
         lower_red = np.array([110,50,50]) #lower hsv range of blue colour
         upper_red = np.array([130,255,255]) #upper hsv range of blue colour
-        # lower = np.array( [ 50 ,0 ,0 , ] ) 
-        # upper = np.array( [ 35,0 ,0 , ]) #hailla abhi bhi comments padh rahe ho tum banoge asli coderss
-        # mask1 = cv2.inRange( hsv ,lower ,upper ) #itna padh hi liyatho khud hi guess marlo
-        mask = cv2.inRange( hsv ,lower_red ,upper_red ) #arey last wala guess maro phir yai padhna
+        # # lower = np.array( [ 50 ,0 ,0 , ] ) 
+        # # upper = np.array( [ 35,0 ,0 , ]) #hailla abhi bhi comments padh rahe ho tum banoge asli coderss
+        # # mask1 = cv2.inRange( hsv ,lower ,upper ) #itna padh hi liyatho khud hi guess marlo
+        # mask = cv2.inRange( hsv ,lower_red ,upper_red ) #arey last wala guess maro phir yai padhna
         
-        #res = cv2.bitwise_and( frame, frame, mask= mask )
+        # #res = cv2.bitwise_and( frame, frame, mask= mask )
 
-        #kernel = np.ones( ( 5 ,5 ), np.uint8 )
+        # #kernel = np.ones( ( 5 ,5 ), np.uint8 )
         
-        mask = cv2.erode( mask ,None ,iterations=2 )
-        mask = cv2.dilate( mask,None ,iterations=2 )
-        #closing = cv2.morphologyEx( mask ,cv2.MORPH_CLOSE ,kernel )
-        contours = cv2.findContours( mask ,cv2.RETR_EXTERNAL ,cv2.CHAIN_APPROX_SIMPLE )[-2]
-        for i in range( 0, len(contours) ):
-            if ( i % 1 == 0 ):
-                cnt = contours[i]
+        # mask = cv2.erode( mask ,None ,iterations=2 )
+        # mask = cv2.dilate( mask,None ,iterations=2 )
+        # #closing = cv2.morphologyEx( mask ,cv2.MORPH_CLOSE ,kernel )
+        # contours = cv2.findContours( mask ,cv2.RETR_EXTERNAL ,cv2.CHAIN_APPROX_SIMPLE )[-2]
+        #contours = sorted(contours,key = lambda x:cv2.contourArea(x), reverse=True)
+        img1,mask,points = detect_inrange(frame,200,500000, lower_red, upper_red)
+        if len(points) != 0:
+            circle_x = points[0][0]
+            circle_y = points[0][1]
+            circle_rayon=points[0][2]
+            #img1 = cv2.circle(img1,(circle_x,circle_y),circle_rayon,(100,120,20),5)
+            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(100,120,20),5)
+            cv2.rectangle( mask, (circle_x-circle_rayon ,circle_y-circle_rayon) ,(circle_x+circle_rayon ,circle_y+circle_rayon ) ,( 255 ,255 ,0 ) ,2 )
+            if(circle_rayon > 50):
+                print(x_center_bar)
+                img1 = cv2.rectangle( frame,( x_center_bar-50 ,bar_offset ), ( x_center_bar+50 ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
+                x_center_bar = int( (circle_x) )
 
-                x,y,w,h = cv2.boundingRect( cnt )
+
+
+        
+        # for i in range( 0, len(contours) ):
+        #     if ( i % 1 == 0 ):
+        #         cnt = contours[i]
+
+        #         x,y,w,h = cv2.boundingRect( cnt )
                 
                 
-                if ( w*h > 2500 ):
-                    cv2.drawContours( mask ,contours ,-1, (255,255,0), 3 )
+        #         if ( w*h > 2000 ):
+        #             cv2.drawContours( mask ,contours ,-1, (255,255,0), 3 )
                     
-                    img1 = cv2.rectangle( frame,( height-(x_center_bar-25) ,bar_offset ), ( height-(x_center_bar+25) ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
+        #             img1 = cv2.rectangle( frame,( x_center_bar-50 ,bar_offset ), ( x_center_bar+50 ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
 
-                    img1 = cv2.rectangle( frame,( x_center_bar-20 ,y_center_bar-20 ), ( x_center_bar+20 ,y_center_bar+20 ), ( 255 ,0 ,255 ), -1 )
+        #             img1 = cv2.rectangle( frame,( x_center_bar-20 ,y_center_bar-20 ), ( x_center_bar+20 ,y_center_bar+20 ), ( 255 ,0 ,255 ), -1 )
 
-                    cv2.rectangle( mask, ( x ,y ) ,( x+w ,y+h ) ,( 255 ,0 ,0 ) ,2 )
+        #             cv2.rectangle( mask, ( x ,y ) ,( x+w ,y+h ) ,( 255 ,0 ,0 ) ,2 )
                                         
-                    x_center_bar = int( ( x + ( w/2 ) ) )
-                    print(x_center_bar)
-                    y_center_bar = int( ( y + ( h/2 ) ) )
+        #             x_center_bar = int( ( x + ( w/2 ) ) )
+        #             print(x_center_bar)
+        #             y_center_bar = int( ( y + ( h/2 ) ) )
                     
                    
 
@@ -135,7 +168,7 @@ def game( ):
         if ( x1 <= 0 ):
             dx = randint(3,5)
         if ( y2 >= bar_offset ):
-            if (height-( x_center_bar-25 ) >= x2 and height-( x_center_bar+25 ) <= x2) or (height-( x_center_bar-25 ) >= x1 and height-( x_center_bar+25 ) <= x1):
+            if (x_center_bar+50 >= x2 and x_center_bar-50  <= x2) or ( x_center_bar+50 >= x1 and x_center_bar-50<= x1):
                 
                 dy = -(randint(3, 5))
         if y2 > bar_offset:
@@ -155,7 +188,7 @@ def game( ):
         #cv2.imshow('Original',frame)
         cv2.imshow( 'Mask' ,mask )
         cv2.imshow('frame',frame)
-        cv2.imshow('another image',img1)
+        #cv2.imshow('another image',img1)
         #cv2.imshow('Opening',opening)
         #cv2.imshow('Closing',closing)
         #cv2.imshow( 'img' ,img1 )
