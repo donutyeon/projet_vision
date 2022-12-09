@@ -32,25 +32,7 @@ def game( ):
     
     x_center_bar = -100
     y_center_bar = -100
-    bar_offset = 410
-    x_brick_dimension = 30
-    y_brick_dimension = 10
-    f=0
-    bricks = []
-
-    for i in range(4):
-        bricks.append([])
-     
-        for j in range(18):
-            bricks[i].append([])
-             
-        for j in range(18):
-            x9 = x_brick_dimension + 40*j
-        
-            y9 = y_brick_dimension + 20*i
-            
-            bricks[i][j] = str(x9)+"_"+str(y9)
-          
+    bar_offset = 410         
 
 
     cap = cv2.VideoCapture( 0 )
@@ -72,7 +54,7 @@ def game( ):
             if(circle_rayon > 50):
                 print(x_center_bar)
                 img1 = cv2.rectangle( frame,( x_center_bar-50 ,bar_offset ), ( x_center_bar+50 ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
-                x_center_bar = int( (circle_x) )
+                x_center_bar = int( (circle_x))
             else: x_center_bar= -100
         
         x1 = x1 + dx
@@ -81,73 +63,24 @@ def game( ):
         x2 = x2 + dx
         img1 = cv2.circle(frame, (x1, y1), 7, ( 255 ,255 ,255 ), -1)
         #img1 = cv2.rectangle( frame, ( x1 ,y1 ), ( x2 ,y2 ), ( 255 ,255 ,255 ), -1 )
-        a = random()
-        for i in range(4):
-            for j in range(18):
-                
-                rec = bricks[i][j]
-                
-                    
-                if rec != []:
-                    rec1 = str(rec)
-
-                    rec_1 = rec1.split("_")
-    
-                    x12 = int(rec_1[0])
-                    y12 = int(rec_1[1])
-           
-                
-                img1 = cv2.rectangle( frame, ( x12 , y12 ), ( x12+x_brick_dimension , y12+y_brick_dimension ), ( 210 ,90+(10*j) ,110+(20*j) ), -1 )
+       
         if ( x2 >= width ):
             dx = -(randint(3, 5))
-            
-            
-        for i in range(4):
-            for j in range(18):
-                ree = bricks[i][j]
-                if ree != []:
-                    ree1 = str(ree)
-                    ree_1 = ree1.split("_")
-                    x13 = int (ree_1[0])
-                    y13 = int (ree_1[1])
-                    #works but to revise psk telfetli
-                    if (((x13 <= x2 and x13+x_brick_dimension >=x2) or (x13 <= x1 and x13+x_brick_dimension >=x1)) and y1<=y13 ) or (y1<=y_brick_dimension):
-                        dy = randint(3,5)
-                        bricks[i][j]=[]
-                        f = f+1
-                        break                       
+        
+        if ( x1-7 <= 0 ):
+            dx = randint(3,5)                       
                        
-        score = "SCORE : "+str(f)
-        font = cv2.FONT_HERSHEY_SIMPLEX
-            
-        bottomLeftCornerOfText = ( 230 ,25 )
-        fontScale              = 1
-        fontColor              = ( 210 ,120 ,120 )
-        lineType               = 2
-        cv2.putText( img1 ,score,bottomLeftCornerOfText ,font ,fontScale ,fontColor ,lineType )
-                         
- 
-        if ( x1 <= 0 ):
-            dx = randint(3,5)
-        if ( y2 >= bar_offset ):
-            if (x_center_bar+50 >= x2 and x_center_bar-50  <= x2) or ( x_center_bar+50 >= x1 and x_center_bar-50<= x1):
-                
-                dy = -(randint(3, 5))
-        if y2 > bar_offset:
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            bottomLeftCornerOfText = ( 230 ,25 )
-            fontScale              = 1
-            fontColor              = ( 255 ,255 ,255 )
-            lineType               = 2
-            
+        if ( y1-7 <= 0 ):
+            dy = randint(3,5)
 
-            cv2.putText( img1 ,'GAME OVER!' ,bottomLeftCornerOfText ,font ,fontScale ,fontColor ,lineType )        
-            if y2 > bar_offset+40:
-                pass
-                # cv2.destroyAllWindows( )
-                # cap.release( )
-                # break
-        #cv2.imshow('Original',frame)
+        if ( y2 >= bar_offset):
+            print(y2)
+            if (x_center_bar+50 >= x2 and x_center_bar-50  <= x2) or ( x_center_bar+50 >= x1 and x_center_bar-50<= x1):
+                dy = -(randint(3, 5))
+            if y2 >= height: 
+                dy = -(randint(3, 5))
+        print(y2, height)
+
         cv2.imshow( 'Mask' ,mask )
         cv2.imshow('frame',frame)
         #cv2.imshow('another image',img1)
