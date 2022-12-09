@@ -13,11 +13,11 @@ def game( ):
     y1 = 150 #initial y coord values for ball's top left corner
     y2 = 160 #initial y coord values for ball's bottom right corner
     
-    x_center_bar = 150
+    x_center_bar = 640//2
     y_center_bar = 150
     bar_offset = 410
     x_brick_dimension = 10
-    y_brick_dimension = 50
+    y_brick_dimension = 30
     f=0
     bricks = []
 
@@ -77,12 +77,13 @@ def game( ):
                     
                     img1 = cv2.rectangle( frame,( height-(x_center_bar-25) ,bar_offset ), ( height-(x_center_bar+25) ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
                     cv2.rectangle( mask, ( x ,y ) ,( x+w ,y+h ) ,( 255 ,0 ,0 ) ,2 )
+                                        
                     x_center_bar = int( ( x + ( w/2 ) ) )
+                    print(x_center_bar)
                     y_center_bar = int( ( y + ( h/2 ) ) )
                     
                    
 
-        #agar neeche kya kiya hai samja tho mujai bhi batao plz    
         
         x1 = x1 + dx
         y1 = y1 + dy
@@ -107,7 +108,7 @@ def game( ):
                 
                 img1 = cv2.rectangle( frame, ( x12 , y12 ), ( x12+50 , y12+10 ), ( 210 ,90+(10*j) ,110+(20*j) ), -1 )
         if ( x2 >= width ):
-            dx = -(randint(1, 5))
+            dx = -(randint(3, 5))
             
             
         for i in range(4):
@@ -119,7 +120,7 @@ def game( ):
                     x13 = int (ree_1[0])
                     y13 = int (ree_1[1])
                     if (((x13 <= x2 and x13+50 >=x2) or (x13 <= x1 and x13+50 >=x1)) and y1<=y13 ) or (y1<=50):
-                        dy = randint(1,5)
+                        dy = randint(3,5)
                         bricks[i][j]=[]
                         f = f+1
                         break                       
@@ -135,11 +136,11 @@ def game( ):
                          
  
         if ( x1 <= 0 ):
-            dx = randint(1,5)
+            dx = randint(3,5)
         if ( y2 >= bar_offset ):
             if (height-( x_center_bar-25 ) >= x2 and height-( x_center_bar+25 ) <= x2) or (height-( x_center_bar-25 ) >= x1 and height-( x_center_bar+25 ) <= x1):
                 
-                dy = -(randint(1, 5))
+                dy = -(randint(3, 5))
         if y2 > bar_offset:
             font = cv2.FONT_HERSHEY_SIMPLEX
             bottomLeftCornerOfText = ( 230 ,25 )
@@ -157,6 +158,7 @@ def game( ):
         #cv2.imshow('Original',frame)
         cv2.imshow( 'Mask' ,mask )
         cv2.imshow('frame',frame)
+        #cv2.imshow('another image',img1)
         #cv2.imshow('Opening',opening)
         #cv2.imshow('Closing',closing)
         #cv2.imshow( 'img' ,img1 )
