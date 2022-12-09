@@ -33,8 +33,8 @@ def game( ):
     x_center_bar = 600//2
     y_center_bar = 150
     bar_offset = 410
-    x_brick_dimension = 10
-    y_brick_dimension = 30
+    x_brick_dimension = 30
+    y_brick_dimension = 10
     f=0
     bricks = []
 
@@ -45,7 +45,7 @@ def game( ):
             bricks[i].append([])
              
         for j in range(18):
-            x9 = x_brick_dimension + 60*j
+            x9 = x_brick_dimension + 40*j
         
             y9 = y_brick_dimension + 20*i
             
@@ -59,67 +59,27 @@ def game( ):
         height = frame.shape[0]
         width = frame.shape[1]
         frame = cv2.flip(frame, 1,frame)
-        # hsv = cv2.cvtColor( frame ,cv2.COLOR_BGR2HSV ) #frame in hsv format
         lower_red = np.array([110,50,50]) #lower hsv range of blue colour
         upper_red = np.array([130,255,255]) #upper hsv range of blue colour
-        # # lower = np.array( [ 50 ,0 ,0 , ] ) 
-        # # upper = np.array( [ 35,0 ,0 , ]) #hailla abhi bhi comments padh rahe ho tum banoge asli coderss
-        # # mask1 = cv2.inRange( hsv ,lower ,upper ) #itna padh hi liyatho khud hi guess marlo
-        # mask = cv2.inRange( hsv ,lower_red ,upper_red ) #arey last wala guess maro phir yai padhna
         
-        # #res = cv2.bitwise_and( frame, frame, mask= mask )
-
-        # #kernel = np.ones( ( 5 ,5 ), np.uint8 )
-        
-        # mask = cv2.erode( mask ,None ,iterations=2 )
-        # mask = cv2.dilate( mask,None ,iterations=2 )
-        # #closing = cv2.morphologyEx( mask ,cv2.MORPH_CLOSE ,kernel )
-        # contours = cv2.findContours( mask ,cv2.RETR_EXTERNAL ,cv2.CHAIN_APPROX_SIMPLE )[-2]
-        #contours = sorted(contours,key = lambda x:cv2.contourArea(x), reverse=True)
         img1,mask,points = detect_inrange(frame,200,500000, lower_red, upper_red)
         if len(points) != 0:
             circle_x = points[0][0]
             circle_y = points[0][1]
             circle_rayon=points[0][2]
-            #img1 = cv2.circle(img1,(circle_x,circle_y),circle_rayon,(100,120,20),5)
             frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(100,120,20),5)
             cv2.rectangle( mask, (circle_x-circle_rayon ,circle_y-circle_rayon) ,(circle_x+circle_rayon ,circle_y+circle_rayon ) ,( 255 ,255 ,0 ) ,2 )
             if(circle_rayon > 50):
                 print(x_center_bar)
                 img1 = cv2.rectangle( frame,( x_center_bar-50 ,bar_offset ), ( x_center_bar+50 ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
                 x_center_bar = int( (circle_x) )
-
-
-
-        
-        # for i in range( 0, len(contours) ):
-        #     if ( i % 1 == 0 ):
-        #         cnt = contours[i]
-
-        #         x,y,w,h = cv2.boundingRect( cnt )
-                
-                
-        #         if ( w*h > 2000 ):
-        #             cv2.drawContours( mask ,contours ,-1, (255,255,0), 3 )
-                    
-        #             img1 = cv2.rectangle( frame,( x_center_bar-50 ,bar_offset ), ( x_center_bar+50 ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
-
-        #             img1 = cv2.rectangle( frame,( x_center_bar-20 ,y_center_bar-20 ), ( x_center_bar+20 ,y_center_bar+20 ), ( 255 ,0 ,255 ), -1 )
-
-        #             cv2.rectangle( mask, ( x ,y ) ,( x+w ,y+h ) ,( 255 ,0 ,0 ) ,2 )
-                                        
-        #             x_center_bar = int( ( x + ( w/2 ) ) )
-        #             print(x_center_bar)
-        #             y_center_bar = int( ( y + ( h/2 ) ) )
-                    
-                   
-
         
         x1 = x1 + dx
         y1 = y1 + dy
         y2 = y2 + dy
         x2 = x2 + dx
-        img1 = cv2.rectangle( frame, ( x1 ,y1 ), ( x2 ,y2 ), ( 255 ,255 ,255 ), -1 )
+        img1 = cv2.circle(frame, (x1, y1), 7, ( 255 ,255 ,255 ), -1)
+        #img1 = cv2.rectangle( frame, ( x1 ,y1 ), ( x2 ,y2 ), ( 255 ,255 ,255 ), -1 )
         a = random()
         for i in range(4):
             for j in range(18):
@@ -136,7 +96,7 @@ def game( ):
                     y12 = int(rec_1[1])
            
                 
-                img1 = cv2.rectangle( frame, ( x12 , y12 ), ( x12+50 , y12+10 ), ( 210 ,90+(10*j) ,110+(20*j) ), -1 )
+                img1 = cv2.rectangle( frame, ( x12 , y12 ), ( x12+x_brick_dimension , y12+y_brick_dimension ), ( 210 ,90+(10*j) ,110+(20*j) ), -1 )
         if ( x2 >= width ):
             dx = -(randint(3, 5))
             
@@ -149,7 +109,8 @@ def game( ):
                     ree_1 = ree1.split("_")
                     x13 = int (ree_1[0])
                     y13 = int (ree_1[1])
-                    if (((x13 <= x2 and x13+50 >=x2) or (x13 <= x1 and x13+50 >=x1)) and y1<=y13 ) or (y1<=50):
+                    #works but to revise psk telfetli
+                    if (((x13 <= x2 and x13+x_brick_dimension >=x2) or (x13 <= x1 and x13+x_brick_dimension >=x1)) and y1<=y13 ) or (y1<=y_brick_dimension):
                         dy = randint(3,5)
                         bricks[i][j]=[]
                         f = f+1
