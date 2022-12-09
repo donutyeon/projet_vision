@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 from random import random, randint   # add any other functions you need here
 
-
+global keep_going
+keep_going = True
 
 def game( ):
     dx = 4 #values with which the ball's pixel x coord increases
@@ -13,7 +14,7 @@ def game( ):
     y1 = 150 #initial y coord values for ball's top left corner
     y2 = 160 #initial y coord values for ball's bottom right corner
     
-    x_center_bar = 640//2
+    x_center_bar = 600//2
     y_center_bar = 150
     bar_offset = 410
     x_brick_dimension = 10
@@ -24,13 +25,9 @@ def game( ):
     for i in range(4):
         bricks.append([])
      
-
-
-
         for j in range(18):
             bricks[i].append([])
-         
-            
+             
         for j in range(18):
             x9 = x_brick_dimension + 60*j
         
@@ -38,17 +35,14 @@ def game( ):
             
             bricks[i][j] = str(x9)+"_"+str(y9)
           
-                
-    
-    
- 
+
 
     cap = cv2.VideoCapture( 0 )
     while( 1 ):
         _, frame = cap.read( )
         height = frame.shape[0]
         width = frame.shape[1]
-        cv2.flip(frame, 1,frame)
+        frame = cv2.flip(frame, 1,frame)
         hsv = cv2.cvtColor( frame ,cv2.COLOR_BGR2HSV ) #frame in hsv format
         lower_red = np.array([110,50,50]) #lower hsv range of blue colour
         upper_red = np.array([130,255,255]) #upper hsv range of blue colour
@@ -76,6 +70,9 @@ def game( ):
                     cv2.drawContours( mask ,contours ,-1, (255,255,0), 3 )
                     
                     img1 = cv2.rectangle( frame,( height-(x_center_bar-25) ,bar_offset ), ( height-(x_center_bar+25) ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
+
+                    img1 = cv2.rectangle( frame,( x_center_bar-20 ,y_center_bar-20 ), ( x_center_bar+20 ,y_center_bar+20 ), ( 255 ,0 ,255 ), -1 )
+
                     cv2.rectangle( mask, ( x ,y ) ,( x+w ,y+h ) ,( 255 ,0 ,0 ) ,2 )
                                         
                     x_center_bar = int( ( x + ( w/2 ) ) )
@@ -158,7 +155,7 @@ def game( ):
         #cv2.imshow('Original',frame)
         cv2.imshow( 'Mask' ,mask )
         cv2.imshow('frame',frame)
-        #cv2.imshow('another image',img1)
+        cv2.imshow('another image',img1)
         #cv2.imshow('Opening',opening)
         #cv2.imshow('Closing',closing)
         #cv2.imshow( 'img' ,img1 )
@@ -166,12 +163,13 @@ def game( ):
         if k == 27:
             cap.release( )
             cv2.destroyAllWindows( )
-            
+            global keep_going
+            keep_going = False
             break
     # while ( 1 ):
     #     if cv2.waitKey( 1 ) & 0xFF == ord( "r" ):
     #         cv2.destroyAllWindows( )
     #         cap.release( )
     #         break
-while ( 1 ):
+while ( keep_going ):
     game( )
