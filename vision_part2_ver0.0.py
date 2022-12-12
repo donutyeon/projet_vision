@@ -21,6 +21,9 @@ def detect_inrange(image,surfacemin,surfacemax, lo, hi):
             break
     return image,mask,points
 
+def color_picker(image, placement):
+    return image[placement[0]][placement[1]]
+
 def game( ):
     dx = 4 #values with which the ball's pixel x coord increases
     dy = 4 #values with which the ball's pixel y coord increases
@@ -33,16 +36,35 @@ def game( ):
     x_center_bar = -100
     y_center_bar = -100
     bar_offset = 410         
-
-
     cap = cv2.VideoCapture( 0 )
+
+    while(1):
+        _, frame = cap.read( )
+        frame = cv2.flip(frame, 1,frame)
+        placement = [int(frame.shape[0]/2), int(frame.shape[1]/2)]
+        cv2.circle(frame, (placement[1], placement[0]), 25, (0, 0, 255), 2)
+        image=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+        color =  color_picker(image, placement)
+        cv2.imshow('image',frame)
+        if cv2.waitKey(10)&0xFF==ord('q'):break
+    #cap.release()
+    cv2.destroyAllWindows()
+
+    #cap = cv2.VideoCapture( 0 )
     while( 1 ):
         _, frame = cap.read( )
         height = frame.shape[0]
         width = frame.shape[1]
         frame = cv2.flip(frame, 1,frame)
+        lo = np.array([color[0]-50,color[1]-50,color[2]-50])
+        lo[lo<0] = 0
+        hi = np.array([color[0]+50,color[1]+50,color[2]+50])
+        hi[hi>255] = 255
         lower_red = np.array([110,50,50]) #lower hsv range of blue colour
         upper_red = np.array([130,255,255]) #upper hsv range of blue colour
+
+        lower_red = lo
+        upper_red = hi
         
         img1,mask,points = detect_inrange(frame,200,500000, lower_red, upper_red)
         if len(points) != 0:
