@@ -45,16 +45,17 @@ def game( ):
             bricks[i].append([])
              
         for j in range(18):
-            x9 = x_brick_dimension + 40*j
+            x9 = (x_brick_dimension-26) + 40*j
         
-            y9 = y_brick_dimension + 20*i
+            y9 = y_brick_dimension + 20*(i+2)
             
             bricks[i][j] = str(x9)+"_"+str(y9)
           
 
 
     cap = cv2.VideoCapture( 0 )
-    while( 1 ):
+    global keep_going
+    while( keep_going ):
         _, frame = cap.read( )
         height = frame.shape[0]
         width = frame.shape[1]
@@ -70,7 +71,6 @@ def game( ):
             frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(255,20,20),5)
             cv2.rectangle( mask, (circle_x-circle_rayon ,circle_y-circle_rayon) ,(circle_x+circle_rayon ,circle_y+circle_rayon ) ,( 255 ,255 ,0 ) ,2 )
             if(circle_rayon > 50):
-                print(x_center_bar)
                 img1 = cv2.rectangle( frame,( x_center_bar-50 ,bar_offset ), ( x_center_bar+50 ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
                 x_center_bar = int( (circle_x) )
             else: x_center_bar= -100
@@ -82,12 +82,12 @@ def game( ):
         img1 = cv2.circle(frame, (x1, y1), 7, ( 255 ,255 ,255 ), -1)
         #img1 = cv2.rectangle( frame, ( x1 ,y1 ), ( x2 ,y2 ), ( 255 ,255 ,255 ), -1 )
         a = random()
+        number_of_bricks = int(width/(x_brick_dimension+10))
+        #print(number_of_bricks)
         for i in range(4):
-            for j in range(18):
+            for j in range(number_of_bricks):
                 
-                rec = bricks[i][j]
-                
-                    
+                rec = bricks[i][j]                    
                 if rec != []:
                     rec1 = str(rec)
 
@@ -98,12 +98,13 @@ def game( ):
            
                 
                 img1 = cv2.rectangle( frame, ( x12 , y12 ), ( x12+x_brick_dimension , y12+y_brick_dimension ), ( 210 ,90+(10*j) ,110+(20*j) ), -1 )
+        
         if ( x2 >= width ):
             dx = -(randint(3, 5))
             
             
         for i in range(4):
-            for j in range(18):
+            for j in range(number_of_bricks):
                 ree = bricks[i][j]
                 if ree != []:
                     ree1 = str(ree)
@@ -111,29 +112,20 @@ def game( ):
                     x13 = int (ree_1[0])
                     y13 = int (ree_1[1])
                     #works but to revise psk telfetli
-                    if (((x13 <= x2 and x13+x_brick_dimension >=x2) or (x13 <= x1 and x13+x_brick_dimension >=x1)) and y1<=y13 ) or (y1<=y_brick_dimension):
+                    if (((x13 <= x2 and x13+x_brick_dimension >=x2) or (x13 <= x1 and x13+x_brick_dimension >=x1)) and y1-7<=y13+y_brick_dimension ) or (y1+7<=y_brick_dimension):
                         dy = randint(3,5)
                         bricks[i][j]=[]
                         f = f+1
                         break                       
                        
-        score = "SCORE : "+str(f)
-        font = cv2.FONT_HERSHEY_SIMPLEX
-            
-        bottomLeftCornerOfText = ( 230 ,25 )
-        fontScale              = 1
-        fontColor              = ( 210 ,120 ,120 )
-        lineType               = 2
-        cv2.putText( img1 ,score,bottomLeftCornerOfText ,font ,fontScale ,fontColor ,lineType )
                          
  
         if ( x1 <= 0 ):
             dx = randint(3,5)
-        if ( y2 >= bar_offset ):
+        if ( y2 >= bar_offset and  y2 < bar_offset+10 ):
             if (x_center_bar+50 >= x2 and x_center_bar-50  <= x2) or ( x_center_bar+50 >= x1 and x_center_bar-50<= x1):
-                
                 dy = -(randint(3, 5))
-        if y2 > bar_offset:
+        if y1 > bar_offset:
             font = cv2.FONT_HERSHEY_SIMPLEX
             bottomLeftCornerOfText = ( 230 ,25 )
             fontScale              = 1
@@ -142,11 +134,27 @@ def game( ):
             
 
             cv2.putText( img1 ,'GAME OVER!' ,bottomLeftCornerOfText ,font ,fontScale ,fontColor ,lineType )        
-            if y2 > bar_offset+40:
-                pass
+            if y2 > bar_offset+60:
+                while(1):
+                    #cv2.imshow('frame',frame)
+                    k = cv2.waitKey(5) & 0xFF
+                    if k == 27:
+                        cv2.destroyAllWindows()
+                        cap.release()
+                        keep_going = False
+                        break
                 # cv2.destroyAllWindows( )
                 # cap.release( )
                 # break
+        else: 
+            score = "SCORE : "+str(f)
+            font = cv2.FONT_HERSHEY_SIMPLEX
+                
+            bottomLeftCornerOfText = ( 230 ,25 )
+            fontScale              = 1
+            fontColor              = ( 210 ,120 ,120 )
+            lineType               = 2
+            cv2.putText( img1 ,score,bottomLeftCornerOfText ,font ,fontScale ,fontColor ,lineType )
         #cv2.imshow('Original',frame)
         cv2.imshow( 'Mask' ,mask )
         cv2.imshow('frame',frame)
@@ -158,7 +166,7 @@ def game( ):
         if k == 27:
             cap.release( )
             cv2.destroyAllWindows( )
-            global keep_going
+            #global keep_going
             keep_going = False
             break
     # while ( 1 ):
