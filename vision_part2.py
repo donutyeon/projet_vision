@@ -21,6 +21,9 @@ def detect_inrange(image,surfacemin,surfacemax, lo, hi):
             break
     return image,mask,points
 
+def color_picker(image, placement):
+    return image[placement[0]][placement[1]]
+
 def game( ):
     dx = 4 #values with which the ball's pixel x coord increases
     dy = 4 #values with which the ball's pixel y coord increases
@@ -54,21 +57,43 @@ def game( ):
 
 
     cap = cv2.VideoCapture( 0 )
+
+    while(1):
+        _, frame = cap.read( )
+        frame = cv2.flip(frame, 1,frame)
+        placement = [int(frame.shape[0]/2), int(frame.shape[1]/2)]
+        color_bgr =  color_picker(frame, placement)
+        cv2.circle(frame, (placement[1], placement[0]), 25, (int(color_bgr[0]), int(color_bgr[1]), int(color_bgr[2])), 2)
+        image=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+        color =color_picker(image, placement)
+        cv2.imshow('image',frame)
+        if cv2.waitKey(10)&0xFF==ord('q'):break
+    #cap.release()
+    cv2.destroyAllWindows()
+
     global keep_going
     while( keep_going ):
         _, frame = cap.read( )
         height = frame.shape[0]
         width = frame.shape[1]
         frame = cv2.flip(frame, 1,frame)
-        lower_red = np.array([110,50,50]) #lower hsv range of blue colour
-        upper_red = np.array([130,255,255]) #upper hsv range of blue colour
+        lo = np.array([color[0]-25,color[1]-70,color[2]-70])
+        lo[lo<0] = 0
+        hi = np.array([color[0]+25,color[1]+70,color[2]+70])
+        hi[hi>255] = 255
+        # lower_red = np.array([110,50,50]) #lower hsv range of blue colour
+        # upper_red = np.array([130,255,255]) #upper hsv range of blue colour
+        # print(lo, hi)
+        lower_red = lo
+        upper_red = hi
+        
         
         img1,mask,points = detect_inrange(frame,200,500000, lower_red, upper_red)
         if len(points) != 0:
             circle_x = points[0][0]
             circle_y = points[0][1]
             circle_rayon=points[0][2]
-            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(255,20,20),5)
+            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(int(color_bgr[0]),int(color_bgr[1]),int(color_bgr[2])),5)
             cv2.rectangle( mask, (circle_x-circle_rayon ,circle_y-circle_rayon) ,(circle_x+circle_rayon ,circle_y+circle_rayon ) ,( 255 ,255 ,0 ) ,2 )
             if(circle_rayon > 50):
                 img1 = cv2.rectangle( frame,( x_center_bar-50 ,bar_offset ), ( x_center_bar+50 ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )

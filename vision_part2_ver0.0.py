@@ -42,9 +42,10 @@ def game( ):
         _, frame = cap.read( )
         frame = cv2.flip(frame, 1,frame)
         placement = [int(frame.shape[0]/2), int(frame.shape[1]/2)]
-        cv2.circle(frame, (placement[1], placement[0]), 25, (0, 0, 255), 2)
+        color_bgr =  color_picker(frame, placement)
+        cv2.circle(frame, (placement[1], placement[0]), 25, (int(color_bgr[0]), int(color_bgr[1]), int(color_bgr[2])), 2)
         image=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-        color =  color_picker(image, placement)
+        color =color_picker(image, placement)
         cv2.imshow('image',frame)
         if cv2.waitKey(10)&0xFF==ord('q'):break
     #cap.release()
@@ -60,9 +61,9 @@ def game( ):
         lo[lo<0] = 0
         hi = np.array([color[0]+25,color[1]+70,color[2]+70])
         hi[hi>255] = 255
-        lower_red = np.array([110,50,50]) #lower hsv range of blue colour
-        upper_red = np.array([130,255,255]) #upper hsv range of blue colour
-        print(lo, hi)
+        # lower_red = np.array([110,50,50]) #lower hsv range of blue colour
+        # upper_red = np.array([130,255,255]) #upper hsv range of blue colour
+        # print(lo, hi)
         lower_red = lo
         upper_red = hi
         
@@ -71,7 +72,7 @@ def game( ):
             circle_x = points[0][0]
             circle_y = points[0][1]
             circle_rayon=points[0][2]
-            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(100,120,20),5)
+            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(int(color_bgr[0]),int(color_bgr[1]),int(color_bgr[2])),5)
             cv2.rectangle( mask, (circle_x-circle_rayon ,circle_y-circle_rayon) ,(circle_x+circle_rayon ,circle_y+circle_rayon ) ,( 255 ,255 ,0 ) ,2 )
             if(circle_rayon > 50):
                 print(x_center_bar)

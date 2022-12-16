@@ -45,9 +45,14 @@ def game( ):
         frame = cv2.flip(frame, 1,frame)
         placement = [int(frame.shape[0]/2), int(frame.shape[1]/2)]
         if color1 is None:
-            cv2.circle(frame, (placement[1], placement[0]), 25, (0, 0, 255), 2)
+            color =  color_picker(frame, placement)
+            cv2.circle(frame, (placement[1], placement[0]), 25, (int(color[0]), int(color[1]), int(color[2])), 2)
         else:
-            cv2.circle(frame, (placement[1], placement[0]), 25, (0, 255, 0), 2)
+            color =  color_picker(frame, placement)
+            color1_bgr = cv2.cvtColor(np.uint8([[color1]]),cv2.COLOR_HSV2BGR)
+            color1_bgr = list(color1_bgr[0][0])
+            cv2.rectangle(frame, (0,0), (30,30), (int(color1_bgr[0]), int(color1_bgr[1]), int(color1_bgr[2])), -1)
+            cv2.circle(frame, (placement[1], placement[0]), 25, (int(color[0]), int(color[1]), int(color[2])), 2)
         image=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
         cv2.imshow('image',frame)
         if cv2.waitKey(10)&0xFF==ord('n'):
@@ -90,10 +95,13 @@ def game( ):
             circle_x = points_orange[0][0]
             circle_y = points_orange[0][1]
             circle_rayon=points_orange[0][2]
-            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(int(color1[0]), int(color1[1]), int(color1[2])),5)
+            color1_bgr = cv2.cvtColor(np.uint8([[color1]]),cv2.COLOR_HSV2BGR)
+            color1_bgr = list(color1_bgr[0][0])
+            cv2.rectangle(frame, (0,0), (30,30), (int(color1_bgr[0]), int(color1_bgr[1]), int(color1_bgr[2])), -1)
+            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(int(color1_bgr[0]), int(color1_bgr[1]), int(color1_bgr[2])),5)
             cv2.rectangle( mask_orange, (circle_x-circle_rayon ,circle_y-circle_rayon) ,(circle_x+circle_rayon ,circle_y+circle_rayon ) ,( 255 ,255 ,0 ) ,2 )
             if(circle_rayon > 50):
-                img1 = cv2.rectangle( frame,( bar_offset_left-5 ,left_center_bar-50 ), ( bar_offset_left+5 ,left_center_bar+50 ), (int(color1[0]), int(color1[1]), int(color1[2])), -1 )
+                img1 = cv2.rectangle( frame,( bar_offset_left-5 ,left_center_bar-50 ), ( bar_offset_left+5 ,left_center_bar+50 ), (int(color1_bgr[0]), int(color1_bgr[1]), int(color1_bgr[2])), -1 )
                 left_center_bar = int( (circle_y))
             else: left_center_bar= -100
         
@@ -101,11 +109,13 @@ def game( ):
             circle_x = points_blue[0][0]
             circle_y = points_blue[0][1]
             circle_rayon=points_blue[0][2]
-            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(int(color2[0]), int(color2[1]), int(color2[2])),5)
-           
+            color2_bgr = cv2.cvtColor(np.uint8([[color2]]),cv2.COLOR_HSV2BGR)
+            color2_bgr = list(color2_bgr[0][0])
+            cv2.rectangle(frame, (width-30,0), (width,30), (int(color2_bgr[0]), int(color2_bgr[1]), int(color2_bgr[2])), -1)
+            frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(int(color2_bgr[0]), int(color2_bgr[1]), int(color2_bgr[2])),5)
             cv2.rectangle( mask_blue, (circle_x-circle_rayon ,circle_y-circle_rayon) ,(circle_x+circle_rayon ,circle_y+circle_rayon ) ,( 255 ,255 ,0 ) ,2 )
-            if(circle_rayon > 50):
-                img1 = cv2.rectangle( frame,( bar_offset_right-5 ,right_center_bar-50 ), ( bar_offset_right+5 ,right_center_bar+50 ), (int(color2[0]), int(color2[1]), int(color2[2])), -1 )
+            if(circle_rayon > 50):  
+                img1 = cv2.rectangle( frame,( bar_offset_right-5 ,right_center_bar-50 ), ( bar_offset_right+5 ,right_center_bar+50 ), (int(color2_bgr[0]), int(color2_bgr[1]), int(color2_bgr[2])), -1 )
                 right_center_bar = int( (circle_y))
             else: right_center_bar= -100
         
