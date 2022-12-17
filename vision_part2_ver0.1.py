@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from random import random, randint   # add any other functions you need here
+from KalmanFilter import KalmanFilter
 
 global keep_going
 keep_going = True
@@ -25,6 +26,8 @@ def color_picker(image, placement):
     return image[placement[0]][placement[1]]
 
 def game( ):
+    KF1 = KalmanFilter(0.1,[10,10])
+    KF2 = KalmanFilter(0.1,[10,10])
     dx = 4 #values with which the ball's pixel x coord increases
     dy = 4 #values with which the ball's pixel y coord increases
  
@@ -91,7 +94,13 @@ def game( ):
         upper_blue = hi #upper hsv range of blue colour
         img1,mask_orange,points_orange = detect_inrange(frame,200,500000, lower_orange, upper_orange)
         img1,mask_blue,points_blue = detect_inrange(frame,200,500000, lower_blue, upper_blue)
+        etat = KF1.predict().astype(np.int32)
+        etat2 = KF2.predict().astype(np.int32)
+        #cv2.circle(frame, (int(etat[0]), int(etat[1])), 2, (0,255,0), 5)
+        cv2.arrowedLine(frame, (int(etat[0]), int(etat[1])),(int(etat[0]+etat[2]), int(etat[1]+etat[3])), color = (0,255,0), thickness=3, tipLength=0.2)
+        cv2.arrowedLine(frame, (int(etat2[0]), int(etat2[1])),(int(etat2[0]+etat2[2]), int(etat2[1]+etat2[3])), color = (0,255,0), thickness=3, tipLength=0.2)
         if len(points_orange) != 0:
+            KF1.update(np.expand_dims((points_orange[0][0], points_orange[0][1]), axis = -1))
             circle_x = points_orange[0][0]
             circle_y = points_orange[0][1]
             circle_rayon=points_orange[0][2]
@@ -104,8 +113,17 @@ def game( ):
                 img1 = cv2.rectangle( frame,( bar_offset_left-5 ,left_center_bar-50 ), ( bar_offset_left+5 ,left_center_bar+50 ), (int(color1_bgr[0]), int(color1_bgr[1]), int(color1_bgr[2])), -1 )
                 left_center_bar = int( (circle_y))
             else: left_center_bar= -100
+        else: 
+            img1 = cv2.rectangle( frame,( bar_offset_left-5 ,left_center_bar-50 ), ( bar_offset_left+5 ,left_center_bar+50 ), (int(color1_bgr[0]), int(color1_bgr[1]), int(color1_bgr[2])), -1 )            
+            if int(etat[1]) < 0:
+                left_center_bar = 0
+            elif int(etat[1]) > height:
+                left_center_bar = height
+            else:
+                left_center_bar = int(etat[1])
         
         if len(points_blue) != 0:
+            KF2.update(np.expand_dims((points_blue[0][0], points_blue[0][1]), axis = -1))
             circle_x = points_blue[0][0]
             circle_y = points_blue[0][1]
             circle_rayon=points_blue[0][2]
@@ -118,6 +136,14 @@ def game( ):
                 img1 = cv2.rectangle( frame,( bar_offset_right-5 ,right_center_bar-50 ), ( bar_offset_right+5 ,right_center_bar+50 ), (int(color2_bgr[0]), int(color2_bgr[1]), int(color2_bgr[2])), -1 )
                 right_center_bar = int( (circle_y))
             else: right_center_bar= -100
+        else: 
+            img1 = cv2.rectangle( frame,( bar_offset_right-5 ,right_center_bar-50 ), ( bar_offset_right+5 ,right_center_bar+50 ), (int(color2_bgr[0]), int(color2_bgr[1]), int(color2_bgr[2])), -1 )
+            if int(etat2[1]) < 0:
+                right_center_bar = 0
+            elif int(etat2[1]) > height:
+                right_center_bar = height
+            else:
+                right_center_bar = int(etat2[1])
         
         x1 = x1 + dx
         y1 = y1 + dy

@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 from random import random, randint   # add any other functions you need here
+from KalmanFilter import KalmanFilter
+
 
 global keep_going
 keep_going = True
@@ -25,6 +27,7 @@ def color_picker(image, placement):
     return image[placement[0]][placement[1]]
 
 def game( ):
+    KF = KalmanFilter(0.1,[10,10])
     dx = 4 #values with which the ball's pixel x coord increases
     dy = 4 #values with which the ball's pixel y coord increases
  
@@ -88,17 +91,29 @@ def game( ):
         upper_red = hi
         
         
-        img1,mask,points = detect_inrange(frame,200,500000, lower_red, upper_red)
+        img1,mask,points = detect_inrange(frame,200,50000, lower_red, upper_red)
+        etat = KF.predict().astype(np.int32)
+        #cv2.circle(frame, (int(etat[0]), int(etat[1])), 2, (0,255,0), 5)
+        cv2.arrowedLine(frame, (int(etat[0]), int(etat[1])),(int(etat[0]+etat[2]), int(etat[1]+etat[3])), color = (0,255,0), thickness=3, tipLength=0.2)
         if len(points) != 0:
+            KF.update(np.expand_dims((points[0][0], points[0][1]), axis = -1))
             circle_x = points[0][0]
             circle_y = points[0][1]
             circle_rayon=points[0][2]
             frame = cv2.circle(frame,(circle_x,circle_y),circle_rayon,(int(color_bgr[0]),int(color_bgr[1]),int(color_bgr[2])),5)
             cv2.rectangle( mask, (circle_x-circle_rayon ,circle_y-circle_rayon) ,(circle_x+circle_rayon ,circle_y+circle_rayon ) ,( 255 ,255 ,0 ) ,2 )
-            if(circle_rayon > 50):
+            if(circle_rayon > 25):
                 img1 = cv2.rectangle( frame,( x_center_bar-50 ,bar_offset ), ( x_center_bar+50 ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
                 x_center_bar = int( (circle_x) )
             else: x_center_bar= -100
+        else: 
+            img1 = cv2.rectangle( frame,( x_center_bar-50 ,bar_offset ), ( x_center_bar+50 ,bar_offset+10 ), ( 255 ,255 ,255 ), -1 )
+            if int(etat[0]) < 0:
+                x_center_bar = 0
+            elif int(etat[0]) > width:
+                x_center_bar = width
+            else:
+                x_center_bar = int(etat[0])
         
         x1 = x1 + dx
         y1 = y1 + dy
